@@ -9,7 +9,7 @@ try {
       appName: "Pustak Web",
       apiDomain: process.env.API_DOMAIN || "",
       websiteDomain: process.env.WEB_DOMAIN || "",
-      apiBasePath: "/auth",
+      apiBasePath: "/api/v1/auth",
       websiteBasePath: "/auth",
     },
     recipeList: [

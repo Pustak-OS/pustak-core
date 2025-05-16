@@ -5,9 +5,16 @@ import path from "path";
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: "/",
   server: {
-    port: 4200,
-    host: true, // Allow access from network (useful for Docker/VMs)
+    host: "::",
+    allowedHosts: ["localhost"],
+    port: 4300,
+    cors: true,
+    fs: {
+      allow: [".."],
+    },
+    strictPort: false,
   },
   resolve: {
     alias: {
