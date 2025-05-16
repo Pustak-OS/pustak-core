@@ -24,8 +24,9 @@ fi
 
 SERVER_COMMAND="cd '$project_root/apps/server' && while ! nc -z localhost 5432 </dev/null; do echo 'Waiting for PostgreSQL to be ready on port 5432...' && sleep 1; done; yarn dev"
 WEB_COMMAND="cd '$project_root/apps/web' && yarn dev"
-# Start only db service from docker-compose, explicitly loading .env from project root.
-DOCKER_COMMAND="cd '$project_root' && docker-compose -f docker/docker-compose.yml --env-file .env up --build db"
+# Start database and adminer using the new script
+DB_SCRIPT_PATH="$project_root/scripts/start-db.sh"
+DOCKER_COMMAND="bash '$DB_SCRIPT_PATH'"
 
 SESSION_NAME="PustakDev"
 
@@ -83,15 +84,31 @@ _new_tmux_window() {
 # Function to ensure the session exists
 EnsureSessionExists() {
     local sessionName="$1"
+    local main_window_name="main" # Define for clarity and reuse
+
     if ! tmux has-session -t="$sessionName" 2>/dev/null; then
-        echo "Creating new session: $sessionName"
-        # Create the Tmux session, but detached. The main window will be created next.
-        TMUX='' tmux new-session -ds "$sessionName" -n "main" "$main_pane_command" # Create main window here
-        tmux set-option -w -t "$sessionName:main" remain-on-exit on # Ensure main window stays
+        echo "Creating new session: $sessionName with window $main_window_name"
+        # Create the Tmux session, detached, with the main window.
+        # project_root and main_pane_command are defined globally in the script.
+        TMUX='' tmux new-session -ds "$sessionName" -c "$project_root" -n "$main_window_name" "$main_pane_command"
+        tmux set-option -w -t "$sessionName:$main_window_name" remain-on-exit on
     else
         echo "Session $sessionName already exists."
+        # Check if the main window exists in the existing session
+        # The -F "#{window_name}" formats output to be just window names, one per line.
+        # grep -Fxq matches whole lines (-x) literally (-F) and quietly (-q).
+        if ! tmux list-windows -t "$sessionName" -F "#{window_name}" 2>/dev/null | grep -Fxq "$main_window_name"; then
+            echo "Window $main_window_name not found in session $sessionName. Creating it..."
+            # Create the main window if it doesn't exist. -d for detached.
+            # project_root and main_pane_command are defined globally.
+            # Adding to "$sessionName:" lets tmux pick the next available index.
+            tmux new-window -d -c "$project_root" -t "$sessionName:" -n "$main_window_name" "$main_pane_command"
+            tmux set-option -w -t "$sessionName:$main_window_name" remain-on-exit on
+        else
+            echo "Window $main_window_name already exists in session $sessionName."
+        fi
     fi
-    # Global session options
+    # Global session options (apply regardless of new/existing session)
     tmux set-option -s -t "$sessionName" remain-on-exit on # For new windows by default in this session
     tmux set-option -g -t "$sessionName" mouse on # Mouse support for this session
 }
