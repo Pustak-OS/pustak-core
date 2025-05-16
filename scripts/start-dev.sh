@@ -10,20 +10,17 @@ fi
 
 project_root="$(git rev-parse --show-toplevel)"
 
-# Load environment variables from .env file at project root if it exists
-if [ -f "$project_root/.env" ]; then
-  echo "Loading environment variables from $project_root/.env for script execution..."
-  # Export variables, ignoring lines starting with # and empty lines
-  # This handles simple VAR=value lines. It may not handle complex values with spaces without quotes perfectly.
-  # For production, proper environment management is key.
-  export $(grep -v '^\s*#' "$project_root/.env" | grep -v '^\s*$' | xargs)
-echo "Environment variables loaded."
-else
-  echo "Warning: $project_root/.env file not found. Server might not get all required environment variables."
+# Command to source the project's .env file
+# This will be executed within each service's tmux pane
+SOURCE_PROJECT_ENV_COMMAND="echo 'Sourcing $project_root/.env ...'; set -o allexport; source '$project_root/.env'; set +o allexport; echo '.env sourced.'"
+
+# Check if .env file exists and warn if not, as it's needed by the service commands
+if [ ! -f "$project_root/.env" ]; then
+  echo "Warning: $project_root/.env file not found. Services might not get all required environment variables."
 fi
 
-SERVER_COMMAND="cd '$project_root/apps/server' && while ! nc -z localhost 5432 </dev/null; do echo 'Waiting for PostgreSQL to be ready on port 5432...' && sleep 1; done; yarn dev"
-WEB_COMMAND="cd '$project_root/apps/web' && yarn dev"
+SERVER_COMMAND="cd '$project_root/apps/server' && $SOURCE_PROJECT_ENV_COMMAND && echo '[SERVER PANE] Capturing environment...' && printenv > /tmp/pustak_server_env.txt && echo '[SERVER PANE] Environment captured to /tmp/pustak_server_env.txt. Waiting for DB...' && while ! nc -z localhost 5432 </dev/null; do echo 'Waiting for PostgreSQL to be ready on port 5432...' && sleep 1; done; yarn dev"
+WEB_COMMAND="cd '$project_root/apps/web' && $SOURCE_PROJECT_ENV_COMMAND && yarn dev"
 # Start database and adminer using the new script
 DB_SCRIPT_PATH="$project_root/scripts/start-db.sh"
 DOCKER_COMMAND="bash '$DB_SCRIPT_PATH'"

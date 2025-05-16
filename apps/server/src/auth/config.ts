@@ -21,13 +21,21 @@ export const backendConfig: TypeInput = {
   },
   recipeList: [
     ThirdParty.init({
-      // providers: [
-      //     // Add your OAuth providers here
-      //     ThirdPartyEmailPassword.Google({
-      //         clientId: "GOOGLE_CLIENT_ID",
-      //         clientSecret: "GOOGLE_CLIENT_SECRET"
-      //     })
-      // ]
+      signInAndUpFeature: {
+        providers: [
+          {
+            config: {
+              thirdPartyId: "google",
+              clients: [
+                {
+                  clientId: process.env.GOOGLE_CLIENT_ID || "",
+                  clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+                },
+              ],
+            },
+          },
+        ],
+      },
     }),
     Session.init(),
     Dashboard.init(),
