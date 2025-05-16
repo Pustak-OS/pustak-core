@@ -6,8 +6,8 @@ services:
       context: ../
       dockerfile: Dockerfile # You'll need to create this Dockerfile
     ports:
-      - "3000:3000" # Assuming web client runs on 3000
-      - "3001:3001" # Assuming server runs on 3001
+      - "4200:4200" # Web client new port
+      - "4300:4300" # Server new port
     volumes:
       - ../:/usr/src/app # Mount the whole monorepo
       # Add more specific volumes if needed for node_modules to avoid overwriting
@@ -15,13 +15,13 @@ services:
       - /usr/src/app/apps/server/node_modules
     depends_on:
       - db
-      - auth
     environment:
       - NODE_ENV=development
       - DATABASE_URL=${DATABASE_URL}
-      - SUPERTOKENS_CORE_URL=http://auth:3567
-      - API_DOMAIN=${API_DOMAIN:-http://localhost:3001}
-      - WEB_DOMAIN=${WEB_DOMAIN:-http://localhost:3000}
+      - SUPERTOKENS_CORE_URL=${SUPERTOKENS_CORE_URL} # Will pick up from .env or host environment
+      - SUPERTOKENS_API_KEY=${SUPERTOKENS_API_KEY} # For managed SuperTokens API Key
+      - API_DOMAIN=${API_DOMAIN:-http://localhost:4300} # Updated fallback
+      - WEB_DOMAIN=${WEB_DOMAIN:-http://localhost:4200} # Updated fallback
     # command: sh -c "cd apps/server && yarn start & cd ../web && yarn dev" # Example command, adjust as needed
 
   db:
@@ -35,20 +35,5 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  auth:
-    image: supertokens/supertokens-postgresql:latest
-    ports:
-      - "3567:3567"
-    environment:
-      # These are for the SuperTokens core with PostgreSQL
-      POSTGRESQL_CONNECTION_URI: "postgresql://${POSTGRES_USER:-pustak}:${POSTGRES_PASSWORD:-secret}@db:5432/${POSTGRES_DB:-pustak}"
-      # Add API_KEYS if you want to protect the SuperTokens core dashboard/APIs
-      # API_KEYS: "yourSecretApiKey1,yourSecretApiKey2"
-    depends_on:
-      - db
-    # volumes: # If you need to persist any SuperTokens core data, though usually not required for dev
-    # - supertokens_data:/usr/lib/supertokens
-
 volumes:
   postgres_data:
-  # supertokens_data:

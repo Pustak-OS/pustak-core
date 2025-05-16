@@ -12,5 +12,11 @@
     "supertokens-auth-react": "^0.49.1",
     "typescript": "^5.8.3",
     "vite": "^6.3.5"
-  }
+  },
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite --port 4200 --host"
+  },
+  "keywords": []
 }

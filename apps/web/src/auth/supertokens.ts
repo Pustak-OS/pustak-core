@@ -1,18 +1,18 @@
 import SuperTokens from "supertokens-auth-react";
 import Session from "supertokens-auth-react/recipe/session";
-import ThirdPartyEmailPassword from "supertokens-auth-react/recipe/thirdpartyemailpassword";
+import ThirdParty from "supertokens-auth-react/recipe/thirdparty";
 
 export function initSuperTokens() {
   SuperTokens.init({
     appInfo: {
       appName: "Pustak Web",
-      apiDomain: "http://localhost:3001", // Replace with your API domain
-      websiteDomain: "http://localhost:3000", // Replace with your website domain
+      apiDomain: "http://localhost:4300", // Updated server port
+      websiteDomain: "http://localhost:4200", // Updated web port
       apiBasePath: "/auth",
       websiteBasePath: "/auth",
     },
     recipeList: [
-      ThirdPartyEmailPassword.init({
+      ThirdParty.init({
         signInAndUpFeature: {
           providers: [
             // ThirdPartyEmailPassword.Google.init(),
