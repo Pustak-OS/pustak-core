@@ -7,7 +7,6 @@ import { backendConfig } from "./auth/config"; // Corrected import path and name
 import apiRoutes from "./routes";
 
 // Initialize SuperTokens
-console.log("Initializing SuperTokens", backendConfig);
 supertokens.init(backendConfig);
 
 const app = new Koa();
