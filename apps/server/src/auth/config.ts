@@ -1,10 +1,10 @@
 import ThirdParty from "supertokens-node/recipe/thirdparty";
 import Session from "supertokens-node/recipe/session";
-import Dashboard from "supertokens-node/recipe/dashboard";
-import UserRoles from "supertokens-node/recipe/userroles";
 import { TypeInput } from "supertokens-node/types";
 
 export const backendConfig: TypeInput = {
+  debug: true,
+  framework: "koa",
   supertokens: {
     connectionURI:
       process.env.SUPERTOKENS_CORE_URL ||
@@ -16,7 +16,7 @@ export const backendConfig: TypeInput = {
     appName: "Pustak Server",
     apiDomain: process.env.API_DOMAIN || "YOUR_API_DOMAIN",
     websiteDomain: process.env.WEB_DOMAIN || "YOUR_WEB_DOMAIN",
-    apiBasePath: "/auth",
+    apiBasePath: "/api/v1/auth",
     websiteBasePath: "/auth",
   },
   recipeList: [
@@ -36,10 +36,24 @@ export const backendConfig: TypeInput = {
           },
         ],
       },
+      override: {
+        functions: (originalImplementation) => {
+          return {
+            ...originalImplementation,
+            signInUp: async function (input) {
+              console.log("signInUp", input);
+              if (!input) {
+                console.log("input is undefined");
+              }
+              let response = await originalImplementation.signInUp(input);
+              console.log("response", response);
+
+              return response;
+            },
+          };
+        },
+      },
     }),
     Session.init(),
-    Dashboard.init(),
-    UserRoles.init(),
   ],
-  isInServerlessEnv: true, // Important for some environments like Vercel
 };

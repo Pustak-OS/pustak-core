@@ -10,7 +10,7 @@ const router = new Router();
 //   ctx.body = { userId, email: 'user@example.com' };
 // });
 
-router.get("/api/health", (ctx) => {
+router.get("/api/v1/health", (ctx) => {
   ctx.body = { status: "UP", service: "pustak-server" };
 });
 
