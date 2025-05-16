@@ -3,7 +3,6 @@ import Session from "supertokens-node/recipe/session";
 import { TypeInput } from "supertokens-node/types";
 
 export const backendConfig: TypeInput = {
-  debug: true,
   framework: "koa",
   supertokens: {
     connectionURI:
@@ -41,12 +40,10 @@ export const backendConfig: TypeInput = {
           return {
             ...originalImplementation,
             signInUp: async function (input) {
-              console.log("signInUp", input);
-              if (!input) {
-                console.log("input is undefined");
-              }
               let response = await originalImplementation.signInUp(input);
-              console.log("response", response);
+              if (response.status === "OK") {
+                // TODO: Create a user in our database
+              }
 
               return response;
             },
