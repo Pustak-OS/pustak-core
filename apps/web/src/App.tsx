@@ -1,11 +1,37 @@
 import React from "react";
+import { Providers } from "./contextProviders";
+import { useRoutes } from "react-router-dom";
+import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
+import * as reactRouterDom from "react-router-dom";
+import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
+import { SessionAuth } from "supertokens-auth-react/recipe/session";
+
+function AppRoutes() {
+  const authRoutes = getSuperTokensRoutesForReactRouterDom(reactRouterDom, [
+    ThirdPartyPreBuiltUI,
+  ]);
+
+  const routes = useRoutes([
+    ...authRoutes.map((route) => route.props),
+    // Include the rest of your app routes
+    {
+      path: "/",
+      element: (
+        <SessionAuth>
+          <div>Hello World</div>
+        </SessionAuth>
+      ),
+    },
+  ]);
+
+  return routes;
+}
 
 function App() {
   return (
-    <div>
-      <h1>Pustak Web App</h1>
-      {/* Router and other components will go here */}
-    </div>
+    <Providers>
+      <AppRoutes />
+    </Providers>
   );
 }
 
