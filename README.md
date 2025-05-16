@@ -1,3 +1,3 @@
 # Pustak Core
 
-This is the main monorepo for Pustak. 
+This is the main monorepo for Pustak.
