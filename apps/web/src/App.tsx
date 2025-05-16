@@ -5,6 +5,7 @@ import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui
 import * as reactRouterDom from "react-router-dom";
 import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
+import Dashboard from "./pages/Dashboard";
 
 function AppRoutes() {
   const authRoutes = getSuperTokensRoutesForReactRouterDom(reactRouterDom, [
@@ -18,7 +19,7 @@ function AppRoutes() {
       path: "/",
       element: (
         <SessionAuth>
-          <div>Hello World</div>
+          <Dashboard />
         </SessionAuth>
       ),
     },
