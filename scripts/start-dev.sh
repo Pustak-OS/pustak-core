@@ -67,7 +67,6 @@ PUSTAK DEVELOPMENT ENVIRONMENT
 END'
 
 _new_tmux_window() {
-   echo "Creating new window: $1 in session $SESSION_NAME"
    local window_name="$1"
    local command_to_run="$2"
    # Get current window count for reliable indexing if needed, or let tmux manage.
@@ -75,7 +74,6 @@ _new_tmux_window() {
    local new_window_index
    new_window_index=$(tmux new-window -d -c "$project_root" -t "$SESSION_NAME" -n "$window_name" -P -F '#I' "$command_to_run")
    tmux set-option -w -t "$SESSION_NAME:$new_window_index" remain-on-exit on
-   echo "Window $window_name created with index $new_window_index"
 }
 
 # Function to ensure the session exists
@@ -84,7 +82,6 @@ EnsureSessionExists() {
     local main_window_name="main" # Define for clarity and reuse
 
     if ! tmux has-session -t="$sessionName" 2>/dev/null; then
-        echo "Creating new session: $sessionName with window $main_window_name"
         # Create the Tmux session, detached, with the main window.
         # project_root and main_pane_command are defined globally in the script.
         TMUX='' tmux new-session -ds "$sessionName" -c "$project_root" -n "$main_window_name" "$main_pane_command"
@@ -113,14 +110,11 @@ EnsureSessionExists() {
 EnsureSessionExists "$SESSION_NAME"
 
 # Bindings and other windows are created *after* session is confirmed to exist
-echo "Setting up default bindings for session $SESSION_NAME"
 # These are global key bindings (no tmux prefix needed before them)
 # Use with caution if they conflict with other applications
 tmux bind-key -n : command-prompt
 tmux bind-key -n Tab select-window -n
 tmux bind-key -n S-Tab select-window -p
-
-echo "Setting up custom bindings for session $SESSION_NAME"
 
 # Custom restart bindings (Ctrl-b r <key>)
 tmux bind-key -T root     r switch-client -T restart
@@ -137,15 +131,8 @@ tmux bind-key -T prefix_g K "send-keys -t \"$SESSION_NAME:docker\" Enter; \
                                 send-keys -t \"$SESSION_NAME\" Enter; \
                                 kill-session -t \"$SESSION_NAME\""
 
-echo "Finished setting up custom bindings for session $SESSION_NAME"
-
-echo "Creating service windows for session $SESSION_NAME"
 _new_tmux_window "docker" "$DOCKER_COMMAND"
 _new_tmux_window "web" "$WEB_COMMAND"
-
-echo "Waiting a few seconds for Docker services (db) to initialize..."
-sleep 1
-
 _new_tmux_window "server" "$SERVER_COMMAND"
 
 # Select the main info window first, if the session was newly created or it makes sense in your flow
@@ -153,7 +140,6 @@ tmux select-window -t "$SESSION_NAME:main"
 
 # Attach or switch to the session at the very END
 if [[ -z "${TMUX-}" ]]; then
-  echo "Attaching to session $SESSION_NAME..."
   exec tmux attach-session -t "$SESSION_NAME" # Use exec here as it's the last command
 else
   if [[ "$(tmux display-message -p '#S')" != "$SESSION_NAME" ]]; then
