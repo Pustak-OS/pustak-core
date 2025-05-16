@@ -13,6 +13,6 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../web/src/dashbaord"],
   "exclude": ["node_modules", "**/*.spec.ts"]
 } 

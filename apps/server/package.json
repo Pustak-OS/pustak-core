@@ -12,10 +12,8 @@
     "@koa/cors": "^5.0.0",
     "@koa/router": "^13.1.0",
     "@types/koa": "^2.15.0",
-    "@types/koa-bodyparser": "^4.3.12",
     "@types/koa__router": "^12.0.4",
     "koa": "^3.0.0",
-    "koa-bodyparser": "^4.4.1",
     "supertokens-node": "^22.1.0",
     "typescript": "^5.8.3"
   },

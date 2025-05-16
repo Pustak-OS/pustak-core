@@ -1,6 +1,5 @@
 import Koa from "koa";
 import Router from "@koa/router";
-import bodyParser from "koa-bodyparser";
 import supertokens from "supertokens-node";
 import { middleware } from "supertokens-node/framework/koa";
 import { backendConfig } from "./auth/config"; // Corrected import path and name
@@ -23,7 +22,6 @@ app.use(
   })
 );
 
-app.use(bodyParser());
 app.use(middleware());
 
 // Add other routes here (e.g., from ./routes.ts)
