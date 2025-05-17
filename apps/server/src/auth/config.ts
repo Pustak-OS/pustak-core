@@ -45,7 +45,6 @@ export const backendConfig: TypeInput = {
               // Post sign up response, we check if it was successful
               if (response.status === "OK") {
                 let { id, emails } = response.user;
-                console.log("User ID: ", id);
 
                 // check if user already exists
                 const existingUser = await prisma.user.findUnique({
@@ -69,7 +68,6 @@ export const backendConfig: TypeInput = {
                     profilePic,
                     settings: {},
                   };
-                  console.log("Creating new user in database", newUser);
 
                   // Store new user in database
                   await prisma.user.create({
