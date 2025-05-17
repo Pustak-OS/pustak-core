@@ -1,6 +1,7 @@
 import ThirdParty from "supertokens-node/recipe/thirdparty";
 import Session from "supertokens-node/recipe/session";
 import { TypeInput } from "supertokens-node/types";
+import { prisma } from "../lib/prisma";
 
 export const backendConfig: TypeInput = {
   framework: "koa",
@@ -41,8 +42,40 @@ export const backendConfig: TypeInput = {
             ...originalImplementation,
             signInUp: async function (input) {
               let response = await originalImplementation.signInUp(input);
+              // Post sign up response, we check if it was successful
               if (response.status === "OK") {
-                // TODO: Create a user in our database
+                let { id, emails } = response.user;
+                console.log("User ID: ", id);
+
+                // check if user already exists
+                const existingUser = await prisma.user.findUnique({
+                  where: {
+                    supertokensId: id,
+                  },
+                });
+
+                if (!existingUser) {
+                  const name =
+                    response.rawUserInfoFromProvider.fromUserInfoAPI!["name"];
+                  const profilePic =
+                    response.rawUserInfoFromProvider.fromUserInfoAPI![
+                      "picture"
+                    ];
+
+                  const newUser = {
+                    supertokensId: id,
+                    email: emails[0],
+                    name,
+                    profilePic,
+                    settings: {},
+                  };
+                  console.log("Creating new user in database", newUser);
+
+                  // Store new user in database
+                  await prisma.user.create({
+                    data: newUser,
+                  });
+                }
               }
 
               return response;

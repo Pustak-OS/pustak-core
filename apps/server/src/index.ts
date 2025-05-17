@@ -4,15 +4,11 @@ import { middleware } from "supertokens-node/framework/koa";
 import { backendConfig } from "./auth/config";
 import apiRoutes from "./routes";
 import cors from "@koa/cors";
-import { PrismaClient } from "./generated/prisma";
 
 // Initialize SuperTokens
 supertokens.init(backendConfig);
 
 const app = new Koa();
-
-// Initialize Prisma
-new PrismaClient();
 
 // Configure CORS
 app.use(
