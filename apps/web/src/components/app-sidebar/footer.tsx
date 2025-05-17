@@ -46,7 +46,9 @@ export default function AppSidebarFooter() {
                   <Root className="flex h-5 w-5 items-center justify-center text-center">
                     <Image src={user?.profilePic} alt={user?.name} />
                     <Fallback className="bg-primary text-primary-foreground h-5 w-5 rounded-full">
-                      {user?.name?.charAt(0)}
+                      {user?.name
+                        ? user?.name?.charAt(0)
+                        : user?.email?.charAt(0).toUpperCase() || "U"}
                     </Fallback>
                   </Root>
                 )}
@@ -55,7 +57,7 @@ export default function AppSidebarFooter() {
                     ? "Signing out..."
                     : isLoadingProfile
                     ? "Loading..."
-                    : user?.name || "User"}
+                    : user?.name || user?.email?.split("@")[0] || "User"}
                 </span>
                 <ChevronUp className="ml-auto" />
               </SidebarMenuButton>
