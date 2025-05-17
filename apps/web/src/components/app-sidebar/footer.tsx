@@ -32,7 +32,7 @@ export default function AppSidebarFooter() {
   };
 
   return (
-    <SidebarFooter className={cn(loading && "opacity-50")}>
+    <SidebarFooter>
       <SidebarMenu>
         <SidebarMenuItem>
           <DropdownMenu>
