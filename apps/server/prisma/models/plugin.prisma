@@ -1,0 +1,12 @@
+model Plugin {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name           String       @unique
+  version        String
+  description    String?
+  currentVersion String       @map("current_version")
+  installedAt    DateTime     @default(now()) @map("installed_at") @db.Timestamptz
+  updatedAt      DateTime     @default(now()) @map("updated_at") @db.Timestamptz
+  userPlugins    UserPlugin[]
+
+  @@map("plugins")
+}
