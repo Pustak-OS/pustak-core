@@ -1,4 +1,3 @@
-import React from "react";
 import { signOut } from "supertokens-auth-react/recipe/session";
 
 const Dashboard = () => {
