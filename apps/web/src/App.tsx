@@ -1,4 +1,3 @@
-import React from "react";
 import { Providers } from "./contextProviders";
 import { useRoutes } from "react-router-dom";
 import { getSuperTokensRoutesForReactRouterDom } from "supertokens-auth-react/ui";
@@ -6,6 +5,8 @@ import * as reactRouterDom from "react-router-dom";
 import { ThirdPartyPreBuiltUI } from "supertokens-auth-react/recipe/thirdparty/prebuiltui";
 import { SessionAuth } from "supertokens-auth-react/recipe/session";
 import Dashboard from "./pages/Dashboard";
+import Layout from "./Layout";
+import NotFound from "./pages/404";
 
 function AppRoutes() {
   const authRoutes = getSuperTokensRoutesForReactRouterDom(reactRouterDom, [
@@ -19,9 +20,21 @@ function AppRoutes() {
       path: "/",
       element: (
         <SessionAuth>
-          <Dashboard />
+          <Layout />
         </SessionAuth>
       ),
+      children: [
+        {
+          path: "/",
+          element: <Dashboard />,
+        },
+        // default route
+        {
+          path: "*",
+          element: <NotFound />,
+        },
+        // Add more routes here as needed
+      ],
     },
   ]);
 
