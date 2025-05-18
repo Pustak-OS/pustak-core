@@ -19,10 +19,13 @@ app.use(
     allowHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
   })
 );
-app.use(middleware()); // SuperTokens middleware
-app.use(apiRoutes.routes()).use(apiRoutes.allowedMethods()); // API routes
+// Add SuperTokens middleware
+app.use(middleware());
+// Add routes
+app.use(apiRoutes.routes());
+app.use(apiRoutes.allowedMethods());
 
 const PORT = process.env.PORT || 4300;
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
