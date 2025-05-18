@@ -44,7 +44,11 @@ export default function AppSidebarFooter() {
                   <User2 className="h-5 w-5" />
                 ) : (
                   <Root className="flex h-5 w-5 items-center justify-center text-center">
-                    <Image src={user?.profilePic} alt={user?.name} />
+                    <Image
+                      src={user?.profilePic}
+                      alt={user?.name}
+                      crossOrigin="anonymous"
+                    />
                     <Fallback className="bg-primary text-primary-foreground h-5 w-5 rounded-full">
                       {user?.name
                         ? user?.name?.charAt(0)

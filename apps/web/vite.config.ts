@@ -16,6 +16,10 @@ export default defineConfig({
       allow: [".."],
     },
     strictPort: false,
+    headers: {
+      "Content-Security-Policy":
+        "default-src 'self'; connect-src 'self' http://localhost:* ws://localhost:*; img-src 'self' https://*.googleusercontent.com https://lh3.googleusercontent.com data:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline';",
+    },
   },
   resolve: {
     alias: {
