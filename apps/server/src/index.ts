@@ -4,6 +4,8 @@ import { middleware } from "supertokens-node/framework/koa";
 import { backendConfig } from "./auth/config";
 import apiRoutes from "./routes";
 import cors from "@koa/cors";
+import koaStatic from "koa-static";
+import path from "path";
 
 // Initialize SuperTokens
 supertokens.init(backendConfig);
@@ -19,6 +21,18 @@ app.use(
     allowHeaders: ["content-type", ...supertokens.getAllCORSHeaders()],
   })
 );
+
+// serve the static client files for plugins
+const PLUGINS_DIR = path.resolve(__dirname, "../../../plugins");
+console.log("PLUGINS_DIR", PLUGINS_DIR);
+app.use(
+  koaStatic(PLUGINS_DIR, {
+    extensions: ["mjs", "js", "css", "html", "json"],
+    index: false,
+    // defer: true,
+  })
+);
+
 // Add SuperTokens middleware
 app.use(middleware());
 // Add routes
