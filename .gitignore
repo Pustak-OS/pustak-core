@@ -134,3 +134,7 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# ignore all files in plugin folder except .gitkeep
+plugins/*
+!plugins/.gitkeep
