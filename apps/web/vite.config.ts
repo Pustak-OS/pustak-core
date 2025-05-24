@@ -29,5 +29,8 @@ export default defineConfig({
   define: {
     "process.env.API_DOMAIN": JSON.stringify(process.env.API_DOMAIN || ""),
     "process.env.WEB_DOMAIN": JSON.stringify(process.env.WEB_DOMAIN || ""),
+    "process.env.VITE_APP_VERSION": JSON.stringify(
+      process.env.npm_package_version
+    ),
   },
 });
