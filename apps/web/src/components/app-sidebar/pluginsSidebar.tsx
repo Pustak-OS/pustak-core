@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import { useUserEnabledPlugins } from "../../hooks/usePlugins";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -12,13 +12,8 @@ import {
 import { PlugIcon, Plus } from "lucide-react";
 
 export function PluginsSidebar() {
-  const pluginsList = [
-    {
-      title: "Plugins",
-      url: "/plugins",
-      icon: PlugIcon,
-    },
-  ];
+  const { data: plugins, isLoading } = useUserEnabledPlugins();
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Plugins</SidebarGroupLabel>
@@ -32,16 +27,30 @@ export function PluginsSidebar() {
       </SidebarGroupAction>
       <SidebarGroupContent>
         <SidebarMenu>
-          {pluginsList.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild>
-                <Link to={item.url}>
-                  <item.icon />
-                  <span>{item.title}</span>
-                </Link>
+          {isLoading ? (
+            <SidebarMenuItem>
+              <SidebarMenuButton disabled>
+                <span>Loading...</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
-          ))}
+          ) : plugins?.length ? (
+            plugins.map((plugin) => (
+              <SidebarMenuItem key={plugin.id}>
+                <SidebarMenuButton asChild>
+                  <Link to={`/plugins/${plugin.id}`}>
+                    <PlugIcon />
+                    <span>{plugin.name}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            ))
+          ) : (
+            <SidebarMenuItem>
+              <SidebarMenuButton disabled>
+                <span>No plugins enabled</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
