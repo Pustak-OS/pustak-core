@@ -1,11 +1,18 @@
 import Router from "@koa/router";
 import userRoutes from "./routes/user.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
+import { sendSuccess } from "./lib/response";
 
-const router = new Router();
+const router = new Router({
+  prefix: "/api/v1",
+});
 
-router.get("/api/v1/health", (ctx) => {
-  ctx.body = { status: "UP", service: "pustak-server" };
+router.get("/health", (ctx) => {
+  sendSuccess(ctx, {
+    status: "ok",
+    version: "1.0.0",
+    service: "pustak-server",
+  });
 });
 
 // Mount routes
