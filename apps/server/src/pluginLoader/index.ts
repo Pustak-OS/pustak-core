@@ -1,7 +1,12 @@
 import fs from "fs/promises";
 import path from "path";
 import { PluginRegistry } from "./registry";
-import { InternalPlugin, PluginConfig, PluginContext } from "./types";
+import {
+  InternalPlugin,
+  PluginConfig,
+  PluginContext,
+  PluginHooks,
+} from "./types";
 import Koa from "koa";
 import Router from "@koa/router";
 
@@ -54,13 +59,11 @@ export class PluginLoader {
       const pluginModule = await import(serverEntryPath);
 
       // Use named exports only
-      const hooks = {
-        firstTimeSetup: pluginModule.firstTimeSetup,
-        registerRoute:
-          pluginModule.registerRoutes || pluginModule.registerRoute,
+      const hooks: PluginHooks = {
+        ...pluginModule,
       };
 
-      if (!hooks.firstTimeSetup && !hooks.registerRoute) {
+      if (!hooks.firstTimeSetup && !hooks.registerRoutes) {
         throw new Error(
           `No valid hooks exported from plugin module in ${serverEntryPath}`
         );
@@ -82,6 +85,9 @@ export class PluginLoader {
   private async initializePlugin(plugin: InternalPlugin): Promise<void> {
     if (plugin.isInitialized) return;
 
+    console.log("--------------------------------");
+    console.log("Initializing plugin", plugin.config.name);
+
     const router = new Router({
       prefix: `/api/v1/plugin/${plugin.config.name}`,
     });
@@ -98,13 +104,15 @@ export class PluginLoader {
       }
 
       // Register routes if the hook exists
-      if (plugin.hooks.registerRoute) {
-        await plugin.hooks.registerRoute(context);
+      if (plugin.hooks.registerRoutes) {
+        await plugin.hooks.registerRoutes(context);
         this.app.use(router.routes());
         this.app.use(router.allowedMethods());
       }
 
       plugin.isInitialized = true;
+      console.log("Plugin initialized", plugin.config.name);
+      console.log("--------------------------------");
     } catch (error) {
       console.error(
         `Failed to initialize plugin ${plugin.config.name}:`,

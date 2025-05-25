@@ -14,7 +14,7 @@ export interface PluginContext {
 
 export interface PluginHooks {
   firstTimeSetup?: (context: PluginContext) => Promise<void>;
-  registerRoute?: (context: PluginContext) => Promise<void>;
+  registerRoutes?: (context: PluginContext) => Promise<void>;
 }
 
 // Internal types
