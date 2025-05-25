@@ -6,4 +6,8 @@ export const ENDPOINTS = {
   dashboards: {
     get: { url: `${BASE_ENDPOINT}/dashboards`, method: "GET" },
   },
+  plugins: {
+    getAll: { url: `${BASE_ENDPOINT}/plugins`, method: "GET" },
+    getUserEnabled: { url: `${BASE_ENDPOINT}/user/plugins`, method: "GET" },
+  },
 };
