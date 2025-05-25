@@ -5,6 +5,8 @@ import Koa from "koa";
 export interface PluginConfig {
   name: string;
   serverEntry: string;
+  version?: string;
+  description?: string;
 }
 
 export interface PluginContext {

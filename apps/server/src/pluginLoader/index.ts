@@ -9,6 +9,7 @@ import {
 } from "./types";
 import Koa from "koa";
 import Router from "@koa/router";
+import { prisma } from "../lib/prisma";
 
 export class PluginLoader {
   private registry: PluginRegistry;
@@ -98,9 +99,28 @@ export class PluginLoader {
     };
 
     try {
-      // Run firstTimeSetup if it exists
-      if (plugin.hooks.firstTimeSetup) {
-        await plugin.hooks.firstTimeSetup(context);
+      // Check if plugin exists in DB
+      const existing = await prisma.plugin.findUnique({
+        where: { name: plugin.config.name },
+      });
+
+      if (!existing) {
+        // Create entry in DB
+        await prisma.plugin.create({
+          data: {
+            name: plugin.config.name,
+            version: plugin.config.version || "1.0.0",
+            description: plugin.config.description || "",
+            currentVersion: plugin.config.version || "1.0.0",
+          },
+        });
+
+        // Run firstTimeSetup if it exists
+        if (plugin.hooks.firstTimeSetup) {
+          await plugin.hooks.firstTimeSetup(context);
+        }
+      } else {
+        console.log("Plugin already exists", plugin.config.name);
       }
 
       // Register routes if the hook exists
