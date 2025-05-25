@@ -1,11 +1,7 @@
 import { InternalPlugin } from "./types";
 
-export class PluginRegistry {
-  private plugins: Map<string, InternalPlugin>;
-
-  constructor() {
-    this.plugins = new Map();
-  }
+class PluginRegistry {
+  private plugins: Map<string, InternalPlugin> = new Map();
 
   addPlugin(name: string, plugin: InternalPlugin): void {
     if (this.plugins.has(name)) {
@@ -26,3 +22,5 @@ export class PluginRegistry {
     return Array.from(this.plugins.values());
   }
 }
+
+export const pluginRegistry = new PluginRegistry();

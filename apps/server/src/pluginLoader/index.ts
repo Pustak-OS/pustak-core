@@ -1,6 +1,6 @@
 import fs from "fs/promises";
 import path from "path";
-import { PluginRegistry } from "./registry";
+import { pluginRegistry } from "./registry";
 import {
   InternalPlugin,
   PluginConfig,
@@ -12,14 +12,12 @@ import Router from "@koa/router";
 import { prisma } from "../lib/prisma";
 
 export class PluginLoader {
-  private registry: PluginRegistry;
   private pluginsDir: string;
   private app: Koa;
 
   constructor(pluginsDir: string, app: Koa) {
     this.pluginsDir = pluginsDir;
     this.app = app;
-    this.registry = new PluginRegistry();
   }
 
   async loadPlugins(): Promise<void> {
@@ -35,7 +33,7 @@ export class PluginLoader {
       }
 
       // Initialize all loaded plugins
-      for (const plugin of this.registry.getAllPlugins()) {
+      for (const plugin of pluginRegistry.getAllPlugins()) {
         await this.initializePlugin(plugin);
       }
     } catch (error) {
@@ -76,7 +74,7 @@ export class PluginLoader {
         isInitialized: false,
       };
 
-      this.registry.addPlugin(config.name, plugin);
+      pluginRegistry.addPlugin(config.name, plugin);
     } catch (error) {
       console.error(`Failed to load plugin from ${pluginDir}:`, error);
       throw error;
